@@ -1,28 +1,63 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="app-container">
+    <Sidebar class="app-sidebar" :users="users" @userClick="setActiveUser"/>
+    <UserFullBlock 
+      :user="activeUser"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Sidebar from '@/components/Sidebar'
+import UserFullBlock from '@/components/UserFullBlock'
+import axios from 'axios'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  components: {Sidebar, UserFullBlock},
+  
+  data() {
+    return {
+      users: [],
+      activeUser: null,
+      isLoading: true      
+    }
+  },
+
+
+  created() {
+    this.fetchUsers()
+  },  
+
+
+  methods: {
+    setActiveUser(id) {
+      this.activeUser = this.users[id]
+    },
+
+    fetchUsers() {
+      axios.get('https://randomuser.me/api/?results=20')
+        .then(({data: {results: users}}) => {
+          this.users = users
+          this.isLoading = false
+        })
+    }
+  },
 }
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  html body {
+    background: rgb(250, 250, 250);
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .app-sidebar {
+    width: 400px;
+    min-height: 100vh;
+    border-right: 2px solid rgba(0, 0, 0, .1);
+  }
+
+  .app-container {
+    display: flex;
+  }
 </style>
